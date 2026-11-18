@@ -1,0 +1,5 @@
+size_bin,linear_counts,lin+RF(structure),lin+MLP(structure),lin+MLP(structure+HF),n_test_rows
+<=15,15.66,9.56,8.89,8.34,360
+16-18,14.59,8.0,7.69,7.34,679
+19-21,14.23,7.91,7.51,7.12,700
+22+,10.53,7.8,6.25,5.9,231

@@ -1,0 +1,9 @@
+torch
+torch_geometric
+pyscf
+rdkit
+pandas
+numpy
+scikit-learn
+tqdm
+matplotlib
