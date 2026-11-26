@@ -1,0 +1,23 @@
+Downloading https://deepchemdata.s3-us-west-1.amazonaws.com/datasets/molnet_publish/qm9.zip
+Extracting /home/tejas/projects/delta-clean/data/qm9/raw/qm9.zip
+Downloading https://ndownloader.figshare.com/files/3195404
+Processing...
+
+Done!
+130831 molecules | gdb_1 [H]C([H])([H])[H] | U0 (eV): -1101.49
+(4000, 5)
+count    4000.0
+mean       18.0
+std         3.0
+min         5.0
+25%        16.0
+50%        18.0
+75%        20.0
+max        27.0
+Name: n_atoms, dtype: float64
+0                [H][N-]C1ON=NC(F)[CH+]1C([H])([H])[H]
+1    [H]C#CC([H])([H])[C@]1([H])O[C@]2([H])C([H])([...
+2    [H]N([H])C(=O)C([H])([H])[C@]1([H])OC([H])([H]...
+3                        [H]OC1=C(O[H])C(=O)OC([H])=N1
+4              [H]C1=C([H])N([H])N=C1C#CC([H])([H])[H]
+Name: smiles, dtype: object

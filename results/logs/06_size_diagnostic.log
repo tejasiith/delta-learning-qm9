@@ -1,0 +1,39 @@
+dropped 52 of 4000 molecules RDKit could not parse
+1. Sample composition by size (leftover_std = spread of what the linear model misses):
+           n_molecules  leftover_std  hetero_frac  mean_rings
+size_bin                                                    
+<=15              780         19.80         0.41        1.37
+16-18            1376         19.20         0.30        1.80
+19-21            1349         17.65         0.22        1.95
+22+               443         12.49         0.14        1.39
+
+2. Test MAE by size, and the best model's error as a fraction of the linear model's:
+ model     lin+MLP(structure+HF)  linear_counts  best_over_linear
+size_bin                                                        
+<=15                       8.34          15.66              0.53
+16-18                      7.34          14.59              0.50
+19-21                      7.12          14.23              0.50
+22+                        5.90          10.53              0.56
+
+3. Best-model test MAE by size (rows) and heteroatom fraction (columns):
+ hetero_bin   low   mid  high
+size_bin                    
+<=15        7.32  7.11  8.79
+16-18       7.24  6.99  7.80
+19-21       7.37  6.85  6.57
+22+         5.83  6.28   NaN
+   test rows in each cell:
+ hetero_bin    low    mid   high
+size_bin                       
+<=15         24.0   77.0  259.0
+16-18       172.0  262.0  245.0
+19-21       403.0  232.0   65.0
+22+         194.0   37.0    NaN
+
+4. Best-model test MAE by number of rings:
+           mean  size
+ring_bin            
+1         6.90   706
+2         7.32   755
+3         7.55   340
+4+        8.13   169

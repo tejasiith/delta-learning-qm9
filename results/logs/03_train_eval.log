@@ -1,0 +1,17 @@
+dropped 52 of 4000 molecules RDKit could not parse
+device: cuda | molecules: 3948
+seed 0: train 3160 val 394 test 394
+seed 1: train 3160 val 394 test 394
+seed 2: train 3160 val 394 test 394
+seed 3: train 3160 val 394 test 394
+seed 4: train 3160 val 394 test 394
+
+Test error (kcal/mol), mean and std over 5 seeds:
+                          mae           rmse       
+                         mean    std    mean    std
+model                                              
+lin+MLP(structure+HF)    7.28   0.74    9.32   0.70
+lin+MLP(structure)       7.68   0.87    9.86   0.83
+lin+RF(structure)        8.23   1.17   10.56   1.03
+linear_counts           14.18   1.61   17.76   1.54
+mean                   336.85  21.90  433.56  23.37

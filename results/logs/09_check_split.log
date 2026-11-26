@@ -1,0 +1,7 @@
+dropped 52 of 4000 molecules RDKit could not parse
+seed 0: ok | train 3160, val 394, test 394 | scaffolds train/val/test 945/188/167
+seed 1: ok | train 3160, val 394, test 394 | scaffolds train/val/test 976/157/167
+seed 2: ok | train 3160, val 394, test 394 | scaffolds train/val/test 1021/135/144
+seed 3: ok | train 3160, val 394, test 394 | scaffolds train/val/test 1040/146/114
+seed 4: ok | train 3160, val 394, test 394 | scaffolds train/val/test 993/137/170
+acyclic molecules (always in train): 430

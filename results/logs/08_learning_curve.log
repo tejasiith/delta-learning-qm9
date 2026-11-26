@@ -1,0 +1,13 @@
+dropped 52 of 4000 molecules RDKit could not parse
+seed 0 done
+seed 1 done
+seed 2 done
+seed 3 done
+seed 4 done
+model    lin+MLP(structure+HF)  lin+RF(structure)  linear_counts
+n_train                                                         
+316                      11.01               9.78          14.47
+790                       9.64               8.93          14.21
+1580                      8.57               8.56          14.19
+2370                      7.65               8.34          14.18
+3160                      7.29               8.25          14.18
