@@ -79,8 +79,14 @@ Each doubling takes roughly 1 kcal/mol off the MLP's error and I see no plateau.
 - Even the best model is at about 7 kcal/mol. Chemical accuracy is about 1 kcal/mol, so this is not close.
 
 ## Run it
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu124
+```
 
-Tested in WSL2 (Ubuntu), Python 3.10. PySCF is easier on Linux than on Windows.
+Tested with Python 3.10.12, torch 2.6.0, pyscf 2.15.1, rdkit 2026.9.2, scikit-learn 1.7.2 (all pins in `requirements.txt`, full list in `requirements-lock.txt`).
+
 
 ```bash
 python3 -m venv .venv
