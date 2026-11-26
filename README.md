@@ -9,24 +9,15 @@ Can a small neural network learn the gap between HF/STO-3G and the B3LYP energy 
 ## What I did
 
 - I picked 4,000 random QM9 molecules. RDKit could not read 52 of the SMILES (valence errors from the bond perception used to build them), so I dropped those. Worked with 3,948.
-
 - I ran HF/STO-3G in PySCF on the QM9 geometries. All 4,000 converged, 8 minutes on a laptop CPU.
-
 - Target = (U0 − ZPVE) − E_HF in kcal/mol. QM9s U0 includes zero-point energy, so I subtract ZPVE to get an energy. That is my reading of QM9. As a check, methane gives a gap of −500 kcal/mol, which is the size I expected.
-
 - Split by Murcko scaffold, 80/10/10, with 5 seeds. Whole scaffold groups go to one split. Molecules without rings have no scaffold, so they always go to train (430 of the 3,948 molecules).
-
 - Models, all predicting the target:
-
-1. Training-set mean
-
-2. Linear model on atom counts (H, C, N, O, F)
-
-3. Linear + random forest on structure features
-
-4. Linear + small MLP on structure features
-
-5. Linear + small MLP on structure + HF features
+  1. Training-set mean
+  2. Linear model on atom counts (H, C, N, O, F)
+  3. Linear + random forest on structure features
+  4. Linear + small MLP on structure features
+  5. Linear + small MLP on structure + HF features
 
 The forest and the MLP fit the error the linear model leaves behind. Structure features are the atom counts plus a 1024-bit Morgan count fingerprint (radius 2). HF features are HOMO, LUMO, their gap and the dipole norm.
 
@@ -36,28 +27,20 @@ The forest and the MLP fit the error the linear model leaves behind. Structure f
 
 Error in kcal/mol, mean ± std over 5 seeds:
 
-Model | Test MAE | Test RMSE | Train MAE |
-
+| Model | Test MAE | Test RMSE | Train MAE |
 |---|---:|---:|---:|
-
 | Training-set mean | 336.85 ± 21.90 | 433.56 ± 23.37 | 357.09 |
-
 | Linear, atom counts | 14.18 ± 1.61 | 17.76 ± 1.54 | 14.72 |
-
-| Linear. Random forest (structure) | 8.23 ± 1.17 | 10.56 ± 1.03 | 2.41 |
-
+| Linear + random forest (structure) | 8.23 ± 1.17 | 10.56 ± 1.03 | 2.41 |
 | Linear + MLP (structure) | 7.68 ± 0.87 | 9.86 ± 0.83 | 0.91 |
-
-| Linear. Mlp (structure + HF) | 7.28 ± 0.74 | 9.32 ± 0.70 | 0.78 |
+| Linear + MLP (structure + HF) | 7.28 ± 0.74 | 9.32 ± 0.70 | 0.78 |
 
 ![Test MAE of each model on scaffold-split test sets, 5 seeds](results/test_mae.png)
 
 The seeds share their test difficulty, so the std is mostly to-split variation. The per-seed differences say more:
 
 - MLP (structure) vs forest: lower by 0.55 on average, better in 5 of 5 seeds.
-
 - Adding HF features to the MLP: lower by 0.40 on average, better in 5 of 5 seeds.
-
 - Best MLP vs the linear baseline: lower by 6.9 on average, in 5 of 5 seeds.
 
 ## What I found
@@ -68,18 +51,12 @@ The seeds share their test difficulty, so the std is mostly to-split variation. 
 
 **More data would probably help the MLP, within the range I tested.** I trained on 10% to 100% of the training molecules (316 to 3,160). Tested on the same held-out scaffolds:
 
-| Training molecules | Linear | Random forest | MLP (structure + HF)
-
+| Training molecules | Linear | Random forest | MLP (structure + HF) |
 |---:|---:|---:|---:|
-
 | 316 | 14.47 | 9.78 | 11.01 |
-
-790 | 14.21 | 8.93 | 9.64 |
-
+| 790 | 14.21 | 8.93 | 9.64 |
 | 1580 | 14.19 | 8.56 | 8.57 |
-
-| 2370 | 14.18 8.34 | 7.65 |
-
+| 2370 | 14.18 | 8.34 | 7.65 |
 | 3160 | 14.18 | 8.25 | 7.29 |
 
 ![Learning curve: test MAE against number of training molecules](results/learning_curve.png)
@@ -93,57 +70,34 @@ Each doubling takes 1 kcal/mol off the MLPs error and I see no plateau. The fore
 ## Limits
 
 - Small sample: 4,000 molecules, one fixed sample. The 5 seeds change the split and the training, not the molecules.
-
 - One pair of methods (HF/STO-3G and B3LYP), one dataset, one basis set.
-
 - QM9 only has molecules (up to nine heavy atoms), so none of this says how the approach works on drug-sized molecules.
-
 - The test set only contains molecules with rings, since acyclic molecules always go to train. These numbers say nothing about molecules.
-
 - A scaffold split holds out ring systems,. Test molecules can still be chemically close to training ones.
-
 - I measured errors in energies. Errors in energy differences, for example between isomers, are often what matters in practice. I did not test them.
-
 - Little tuning. I tried a grid over regularisation. I did not tune learning rate, depth, fingerprint size or the forest settings, so the MLP vs forest comparison is not an one.
-
 - No uncertainty estimates, no significance tests and no comparison with published results on tasks.
-
 - The 52 unparseable molecules were dropped, which slightly biases the sample toward molecules RDKit can read.
-
 - HF is run on the B3LYP geometries from QM9. In use you would also need a geometry and I did not count that cost.
-
 - I did not compare with graph networks, Coulomb matrices or other representations.
-
 - Even the best model is at 7 kcal/mol. Chemical accuracy is 1 kcal/mol, so this is not close.
 
 ## Run it
 
 ```bash
-
-python3 -m venv.venv
-
-source.venv/bin/activate
-
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu124
 
 python scripts/01_prepare_data.py       # downloads QM9, samples 4000 molecules
-
 python scripts/02_run_hf.py             # HF/STO-3G, 8 min
-
 python scripts/03_train_eval.py         # split, baselines, MLP, 5 seeds
-
 python scripts/04_error_analysis.py     # by size, element, worst cases
-
 python scripts/05_summary.py            # table and plot
-
 python scripts/06_size_diagnostic.py    # why small molecules look worse
-
 python scripts/07_regularise.py         # dropout / weight decay / ensemble
-
 python scripts/08_learning_curve.py     # error vs training-set size
-
 python scripts/09_check_split.py        # checks the scaffold splits
-
 ```
 
 Tested in WSL2 (Ubuntu) with Python 3.10.12, torch 2.6.0, pyscf 2.15.1, rdkit 2026.9.2, scikit-learn 1.7.2 (all pins in `requirements.txt`, list in `requirements-lock.txt`). PySCF is easier on Linux than on Windows. The MLP uses the GPU if PyTorch sees one, the CPU. It is small enough to train on a laptop.
@@ -151,21 +105,14 @@ Tested in WSL2 (Ubuntu) with Python 3.10.12, torch 2.6.0, pyscf 2.15.1, rdkit 20
 ## Reproducibility
 
 - The versions are fixed in `requirements.txt` for the packages and in `requirements-lock.txt` for the whole environment.
-
 - You will find the 4,000-molecule sample and the HF/STO-3G outputs in `results/inputs/`. So you can check the target without running HF. All 4,000 HF calculations did converge.
-
 - The console output from a rerun is in `results/logs/`. That rerun used a clone and a fresh virtual environment, on the same machine and GPU. The HF energies energies and dipoles came out the same as the first run, with a maximum difference of 0.0. `Sample.csv` was the same too.. The mean test MAE of every model matched the first run to three decimals. That check looked at means over seeds, not at seeds. The tables that scripts 04, 06, 07 and 08 print also match the runs, compared by eye. Exact repeatability of GPU training may not hold on hardware or driver versions.
-
 - `scripts/09_check_split.py` makes sure no Murcko scaffold is shared between train, validation and test. It also checks that no molecule is lost or duplicated, that acyclic molecules stay in train and that the split comes out the same when repeated. All five seeds passed. The test sets hold 114 to 170 scaffolds, depending on the seed.
 
 ## Layout
 
 ```text
-
 src/        config, data loading, HF features, split, features, models, metrics
-
 scripts/    the nine steps above
-
 results/    metrics, predictions, error tables, summary.md, plots, inputs/, logs/
-
 ```
